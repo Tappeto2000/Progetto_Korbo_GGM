@@ -1,0 +1,4 @@
+repository "Progetto_Korbo_GGM@Tappeto2000@cloud"
+  path "/"
+    br "/main"
+    co "/main"
