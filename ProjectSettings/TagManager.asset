@@ -8,6 +8,8 @@ TagManager:
   - Plr
   - Weapon
   - EnemyWeapon
+  - BossWeapon
+  - IsWall
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - IsGround
   - IsPlr
   - grass
-  - 
+  - IsWall
   - 
   - 
   - 

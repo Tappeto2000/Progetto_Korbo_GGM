@@ -8,6 +8,7 @@ public class EnemyAnimController : MonoBehaviour
 {
 
     public GameObject Nemico;
+    public Stats Enemy;
 
     public NavMeshAgent agent;
 
@@ -30,7 +31,9 @@ public class EnemyAnimController : MonoBehaviour
 
     //ATTACK!!!
     public float cooldown = 0.2f;
-    bool hasAttacked;
+    public float deathCooldown = 5f;
+    public bool hasAttacked;
+    public static bool death = false;
     
     //States
     public float SightRange = 50f;
@@ -52,10 +55,20 @@ public class EnemyAnimController : MonoBehaviour
         isPlrInSightRange = Physics.CheckSphere(transform.position, SightRange, IsPlr);
         isPlrInAtkRange = Physics.CheckSphere(transform.position, AttackRange, IsPlr);
 
-        if (!isPlrInSightRange && !isPlrInAtkRange) SearchingTime();
-        if (isPlrInSightRange && !isPlrInAtkRange) ChaseTime();
-        if (isPlrInSightRange && isPlrInAtkRange) AttackTime();
+        if (death == false)
+        {
+            if (!isPlrInSightRange && !isPlrInAtkRange) SearchingTime();
+            if (isPlrInSightRange && !isPlrInAtkRange) ChaseTime();
+            if (isPlrInSightRange && isPlrInAtkRange) AttackTime();
+        }
 
+        if (Enemy.Hp <= 0 && death == false)
+        {
+            Animator anim = Nemico.GetComponent<Animator>();
+            anim.SetTrigger("Mortis");
+            death = true;
+            Invoke(nameof(Death), deathCooldown);
+        }
 
     }
 
@@ -97,7 +110,7 @@ public class EnemyAnimController : MonoBehaviour
     {
         yield return new WaitForSeconds(cooldown);
 
-        Animator anim = Nemico.GetComponent<Animator>();
+        Animator anim = this.GetComponent<Animator>();
         anim.ResetTrigger(trigName);
     }
 
@@ -124,42 +137,48 @@ public class EnemyAnimController : MonoBehaviour
           //  StartCoroutine(ResetEnemyAtk("EnemyAtk"));
 
             hasAttacked = true;
-
             Invoke(nameof(ResetAttack), cooldown);
         }
 
     }
 
-   
-
-    //NON FUNZIONA WHYYY
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.tag == "Plr")
-        {
-            var healthComponent = collision.collider.GetComponent<PlrHealthSystem>();
-            if (healthComponent != null)
-            {
-                healthComponent.TakeDmg(1);
-            }
-        }
-    }
     private void ResetAttack()
     {
         hasAttacked = false;
     }
 
-    public void TakeDmg(int dmg)
+    private void Death()
     {
-        HP -= dmg;
-
-        if (HP <= 0) DestroyEnemy();
-
+        death = false;
+        Destroy(Nemico);
     }
-
-    private void DestroyEnemy()
-    {
-        Destroy(gameObject);
-    }
-
 }
+
+
+
+    //NON FUNZIONA WHYYY
+    /* private void OnCollisionEnter(Collision collision)
+     {
+         if (collision.collider.tag == "Plr")
+         {
+             var healthComponent = collision.collider.GetComponent<PlrHealthSystem>();
+             if (healthComponent != null)
+             {
+                 healthComponent.TakeDmg(1);
+             }
+         }
+     }
+
+     public void TakeDmg(int dmg)
+     {
+         HP -= dmg;
+
+         if (HP <= 0) DestroyEnemy();
+
+     }
+
+     private void DestroyEnemy()
+     {
+         Destroy(gameObject);
+     } */
+     

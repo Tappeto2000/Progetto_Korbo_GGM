@@ -16,12 +16,15 @@ public class DashMovement : MonoBehaviour
     void Update()
     {
         // Dashing
-        if (Time.time >= lastDashTime + dashCooldown && Input.GetKeyDown(KeyCode.LeftShift))
+        if (!ThirdPersonMovement.death) 
         {
-            StartCoroutine(Dash());
-            Animator anim = Corpo.GetComponent<Animator>();
-            anim.SetTrigger("Dash");
-        }
+            if (Time.time >= lastDashTime + dashCooldown && Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                StartCoroutine(Dash());
+                Animator anim = Corpo.GetComponent<Animator>();
+                anim.SetTrigger("Dash");
+            }
+        }   
     }
 
     IEnumerator Dash()
